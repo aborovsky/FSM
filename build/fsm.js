@@ -70,11 +70,11 @@
       return this._currentState = this._initialState;
     };
 
-    Machine.prototype.process = function(action) {
+    Machine.prototype.process = function(action, additionalArgument) {
       var result;
       result = this.getTransition(action, this._currentState);
       if (result[1]) {
-        result[1].call(this.context || (this.context = this), action);
+        result[1].call(this.context || (this.context = this), action, additionalArgument);
       }
       return this._currentState = result[0];
     };

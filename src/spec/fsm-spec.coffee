@@ -2,6 +2,7 @@ describe 'My pet dragon called Burt', () ->
 
     burt = {}
     sounds = {}
+    feedSpy = undefined
     beforeEach ->
 
         # Build a finite state machine for our pet dragon Burt
@@ -32,7 +33,9 @@ describe 'My pet dragon called Burt', () ->
 
         # Various things will sooth Burt when he's gumpy
         burt.addTransition('stroke', 'grumpy', 'content')
-        burt.addTransition('feed', 'grumpy', 'content')
+
+        feedSpy = jasmine.createSpy((action, food) -> console.log('Feeded with ' + food))
+        burt.addTransition('feed', 'grumpy', 'content', feedSpy)
 
         # The only way to get Burt back to sleep is by singing to him
         burt.addTransition 'sing-to', 'content', 'sleeping', () ->
@@ -61,10 +64,11 @@ describe 'My pet dragon called Burt', () ->
 
     it 'should go to sleep if you feed and then sing to him', () ->
         burt.process('call')
-        burt.process('feed')
+        burt.process('feed', 'apple')
         burt.process('sing-to')
         expect(burt.getCurrentState()).toBe 'sleeping'
         expect(sounds.snore).toHaveBeenCalled()
+        expect(feedSpy).toHaveBeenCalledWith 'feed', 'apple'
 
     it 'should go back to sleep when reset (even if enraged)', () ->
         burt.process('call')

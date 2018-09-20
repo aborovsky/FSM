@@ -73,14 +73,14 @@ class FSM.Machine
         # Reset the machine to its initial state
         @_currentState = @_initialState
 
-    process: (action) ->
+    process: (action, additionalArgument) ->
         # Process an action
 
         result = @getTransition(action, @_currentState)
 
         # Call any associated callback
         if result[1]
-            result[1].call(@context or= @, action)
+            result[1].call(@context or= @, action, additionalArgument)
 
         # Transition to the next state
         @_currentState = result[0]

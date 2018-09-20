@@ -1,2 +1,5 @@
 jasmine
 node_modules
+package-lock.json
+_SpecRunner.html
+.grunt

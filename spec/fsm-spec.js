@@ -1,8 +1,9 @@
 (function() {
   describe('My pet dragon called Burt', function() {
-    var burt, sounds;
+    var burt, feedSpy, sounds;
     burt = {};
     sounds = {};
+    feedSpy = void 0;
     beforeEach(function() {
       burt = new FSM.Machine();
       sounds = {
@@ -25,7 +26,10 @@
       });
       spyOn(sounds, 'growl');
       burt.addTransition('stroke', 'grumpy', 'content');
-      burt.addTransition('feed', 'grumpy', 'content');
+      feedSpy = jasmine.createSpy(function(action, food) {
+        return console.log('Feeded with ' + food);
+      });
+      burt.addTransition('feed', 'grumpy', 'content', feedSpy);
       burt.addTransition('sing-to', 'content', 'sleeping', function() {
         return sounds.snore();
       });
@@ -50,10 +54,11 @@
     });
     it('should go to sleep if you feed and then sing to him', function() {
       burt.process('call');
-      burt.process('feed');
+      burt.process('feed', 'apple');
       burt.process('sing-to');
       expect(burt.getCurrentState()).toBe('sleeping');
-      return expect(sounds.snore).toHaveBeenCalled();
+      expect(sounds.snore).toHaveBeenCalled();
+      return expect(feedSpy).toHaveBeenCalledWith('feed', 'apple');
     });
     return it('should go back to sleep when reset (even if enraged)', function() {
       burt.process('call');
